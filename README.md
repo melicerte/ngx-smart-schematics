@@ -8,4 +8,4 @@ All you need is a valid OpenAPI json @see https://swagger.io/resources/open-api/
 TODO
 
 ### Usage
-TODO
+`ng g --collection openapi-schematic openapi-schematic:generate --jsonApi=/path/to/swagger.json`

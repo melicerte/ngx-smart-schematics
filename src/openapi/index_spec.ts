@@ -6,10 +6,10 @@ import * as path from 'path';
 const collectionPath = path.join(__dirname, '../collection.json');
 
 
-describe('api-ddd', () => {
+describe('openapi', () => {
   it('works', () => {
     const runner = new SchematicTestRunner('schematics', collectionPath);
-    const tree = runner.runSchematic('api-ddd', {}, Tree.empty());
+    const tree = runner.runSchematic('openapi', {}, Tree.empty());
 
     expect(tree.files).toEqual([]);
   });

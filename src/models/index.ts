@@ -129,7 +129,7 @@ function addDto(options: any, name: string, schema: any): Rule {
       options.spec ? noop() : filter(path => !path.endsWith('.spec.ts')),
       template({
         ...strings,
-        'if-flat': (s: string) => options.flat ? '' : s,
+        'if-flat': (s: string) => '',
         ...{ name: parsedPath.name, members: membersString, imports: importsString },
       }),
       move(parsedPath.path),

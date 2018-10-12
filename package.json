@@ -1,7 +1,7 @@
 {
-  "name": "api-ddd",
+  "name": "openapi-schematic",
   "version": "0.1.0",
-  "description": "Schematic to generate services and Data Transfer Objects to communicate with an API",
+  "description": "Schematics to generate services and Data Transfer Objects to communicate with an API",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && jasmine src/**/*_spec.js"
@@ -9,7 +9,7 @@
   "keywords": [
     "schematics"
   ],
-  "author": "",
+  "author": "Etienne Châtaignier @melicerte",
   "license": "MIT",
   "schematics": "./src/collection.json",
   "dependencies": {

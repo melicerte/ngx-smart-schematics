@@ -39,7 +39,6 @@ function loadApi(apiJson, options): Rule {
 
 export default function serviceApi(options: any): Rule {
 
-
     // TODO: required, throw error if jsonApi not given
     const apiJson = require(options.jsonApi);
 

@@ -3,8 +3,8 @@
   "schematics": {
     "generate": {
       "description": "Generates Angular Services and Data Transfer Objects to user an API",
-      "factory": "./api-ddd",
-      "schema": "./api-ddd/schema.json"
+      "factory": "./openapi",
+      "schema": "./openapi/schema.json"
     },
     "http-service": {
       "description": "Services generator",

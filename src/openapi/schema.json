@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/schema",
-    "id": "ApiDddApiDdd",
-    "title": "Angular DDD Api structure Options Schema",
+    "id": "OpenApiGenerator",
+    "title": "Angular Api structure Options Schema",
     "type": "object",
     "properties": {
         "jsonApi": {

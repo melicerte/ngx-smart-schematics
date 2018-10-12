@@ -50,7 +50,7 @@ function addApiUrlService(options: any) {
       options.spec ? noop() : filter(path => !path.endsWith('.spec.ts')),
       template({
         ...strings,
-        'if-flat': (s: string) => options.flat ? '' : s,
+        'if-flat': (s: string) => '',
         ...{ name: 'ApiUrl', apiUrl: apiUrl },
       }),
       move(parsedPath.path),
@@ -98,7 +98,7 @@ function addService(options: any, name: string): Rule {
       options.spec ? noop() : filter(path => !path.endsWith('.spec.ts')),
       template({
         ...strings,
-        'if-flat': (s: string) => options.flat ? '' : s,
+        'if-flat': (s: string) => '',
         ...{ name: parsedPath.name, functions: functions, importDto: importDtoString },
       }),
       move(parsedPath.path),
