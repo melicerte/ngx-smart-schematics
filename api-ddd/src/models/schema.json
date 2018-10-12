@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "ApiDddDto",
+  "title": "Api DDD DTO Models Schema",
+  "type": "object",
+  "properties": {
+  },
+  "required": [
+  ]
+}

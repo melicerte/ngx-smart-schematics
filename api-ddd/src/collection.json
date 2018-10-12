@@ -1,0 +1,20 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "generate": {
+      "description": "Generates Angular Services and Data Transfer Objects to user an API",
+      "factory": "./api-ddd",
+      "schema": "./api-ddd/schema.json"
+    },
+    "http-service": {
+      "description": "Services generator",
+      "factory": "./http-service",
+      "schema": "./http-service/schema.json"
+    },
+    "models": {
+      "description": "Data Transfer Objects generator",
+      "factory": "./models",
+      "schema": "./models/schema.json"
+    }
+  }
+}

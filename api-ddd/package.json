@@ -1,0 +1,25 @@
+{
+  "name": "api-ddd",
+  "version": "0.1.0",
+  "description": "Schematic to generate services and Data Transfer Objects to communicate with an API",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && jasmine src/**/*_spec.js"
+  },
+  "keywords": [
+    "schematics"
+  ],
+  "author": "",
+  "license": "MIT",
+  "schematics": "./src/collection.json",
+  "dependencies": {
+    "@angular-devkit/core": "^0.8.4",
+    "@angular-devkit/schematics": "^0.8.4",
+    "@schematics/angular": "^0.8.4",
+    "@types/jasmine": "^2.6.0",
+    "@types/node": "^8.0.31",
+    "jasmine": "^2.8.0",
+    "swagger-parser": "^6.0.0",
+    "typescript": "^2.5.2"
+  }
+}

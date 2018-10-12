@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "id": "ApiDddApiDdd",
+    "title": "Angular DDD Api structure Options Schema",
+    "type": "object",
+    "properties": {
+        "jsonApi": {
+            "description": "The OpenAPI Specifications json describing the API.",
+            "type": "string",
+            "$default": {
+                "$source": "argv",
+                "index": 0
+            }
+        },
+        "path": {
+            "type": "string",
+            "format": "path",
+            "description": "The path to create the api.",
+            "visible": false
+        }
+    },
+    "required": [
+        "jsonApi"
+    ]
+}
