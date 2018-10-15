@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { ApiUrlService } from '../api-url/api-url.service';
+import { ApiUrlService } from './api-url.service';
 <%=importDto%>
 
 import { Observable } from 'rxjs/Observable';

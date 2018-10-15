@@ -128,6 +128,8 @@ function generateFunction(endpoint: string, definition: any, verb: string) {
   // Generate datas
   const returnType = getReturnType(definition);
   const bodyType = getBodyType(definition);
+  // TODO: si paramètre de type array, construire la string à passer dans l'URL
+  // const statusString = status.join('&status=');
   const finalEndpoint = fillEndpointParameters(endpoint, definition.parameters);
   let functionParameters = getFunctionParameters(definition.parameters);
   if (['post', 'put'].some(curVerb => verb === curVerb) && functionParameters !== '') {
@@ -144,7 +146,8 @@ function generateFunction(endpoint: string, definition: any, verb: string) {
     verb: verb,
     finalEndpoint: finalEndpoint,
     functionParameters: functionParameters,
-    queryParameters: queryParameters,
+    queryParameters: queryParameters.parametersString,
+    queryParametersDefinition: queryParameters.parametersDefinition,
     bodyType: bodyType,
     returnType: returnType,
   });

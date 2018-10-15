@@ -4,21 +4,32 @@ export function buildUrl(scheme: string, host: string, basePath: string) {
 
 export function fillEndpointParameters(endpoint: string, parameters: any): string {
     parameters.forEach(parameter => {
-        if (parameter.in === 'path') {
-            endpoint = endpoint.replace('{', '${');
+        if (['path', 'query'].some(parameterIn => parameter.in === parameterIn)) {
+            if (parameter.type === 'array') {
+                endpoint = endpoint.replace('{' + parameter.name + '}', '${' + parameter.name + 'String}');
+            } else {
+                endpoint = endpoint.replace('{' + parameter.name + '}', '${' + parameter.name + '}');
+            }
         }
     });
 
     return endpoint;
 }
 
-export function buildQueryParameters(parameters: any): string {
+// TODO prendre en compte les paramètres optionnels (!required)
+export function buildQueryParameters(parameters: any): { parametersString: string, parametersDefinition: string} {
     let parametersArray: string[] = [];
     let parametersString = '';
+    let parametersDefinition = '';
 
     parameters.forEach(parameter => {
         if (parameter.in === 'query') {
-            parametersArray.push(parameter.name + '=${' + parameter.name + '}');
+            if (parameter.type === 'array') {
+                parametersArray.push(parameter.name + '=${' + parameter.name + 'String}');
+                parametersDefinition += `const ${parameter.name}String = ${parameter.name}.join('&${parameter.name}=');` + "\n";
+            } else {
+                parametersArray.push(parameter.name + '=${' + parameter.name + '}');
+            }
         }
     });
 
@@ -28,5 +39,5 @@ export function buildQueryParameters(parameters: any): string {
         parametersString = '?' + parametersString;
     }
 
-    return parametersString;
+    return { parametersString: parametersString, parametersDefinition: parametersDefinition };
 }
