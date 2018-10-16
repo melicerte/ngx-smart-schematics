@@ -24,7 +24,7 @@ import { parseName } from '../utils/parse-name';
 import { applyLintFix } from '../utils/lint-fix';
 import { buildUrl, fillEndpointParameters, buildQueryParameters } from '../utils/url';
 import { templateFile } from '../utils/template';
-import { getFunctionParameters, translateParameterType } from '../utils/project';
+import { getFunctionParameters, translateParameterType, getPropertyName } from '../utils/project';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
 function createDTOs(options): Rule[] {
@@ -73,19 +73,19 @@ function addDto(options: any, name: string, schema: any): Rule {
         let required = requiredFields.some(field => field === propertyName);
         switch (schema.properties[propertyName].type) {
           case 'object':
-            imports.push('import { ' + schema.properties[propertyName].xml.name + "Dto } from './" + strings.decamelize(schema.properties[propertyName].xml.name) + "-dto.model';");
+            imports.push('import { ' + getPropertyName(schema.properties[propertyName]) + "Dto } from './" + strings.dasherize(getPropertyName(schema.properties[propertyName])) + "-dto.model';");
             member = propertyName;
             if (!required) {
               member += '?';
             }
-            members.push(member + ': ' + schema.properties[propertyName].xml.name + 'Dto;');
+            members.push(member + ': ' + getPropertyName(schema.properties[propertyName]) + 'Dto;');
             break;
           case 'array':
             let memberName = '';
             switch (schema.properties[propertyName].items.type) {
               case 'object':
-                imports.push('import { ' + schema.properties[propertyName].items.xml.name + "Dto } from './" + strings.decamelize(schema.properties[propertyName].items.xml.name) + "-dto.model';");
-                memberName = schema.properties[propertyName].items.xml.name + 'Dto';
+                imports.push('import { ' + getPropertyName(schema.properties[propertyName].items) + "Dto } from './" + strings.dasherize(getPropertyName(schema.properties[propertyName].items)) + "-dto.model';");
+                memberName = getPropertyName(schema.properties[propertyName].items) + 'Dto';
               break;
               default:
                 memberName = translateParameterType(schema.properties[propertyName].items.type);
@@ -102,7 +102,7 @@ function addDto(options: any, name: string, schema: any): Rule {
             if (schema.properties[propertyName].hasOwnProperty('enum')) {
               rules.push(addEnum(options, schema.properties[propertyName], propertyName));
               type = strings.classify(propertyName);
-              imports.push('import { ' + type + " } from '../enum/" + strings.decamelize(propertyName) + ".enum';");
+              imports.push('import { ' + type + " } from '../enum/" + strings.dasherize(propertyName) + ".enum';");
             }
 
             member = propertyName;

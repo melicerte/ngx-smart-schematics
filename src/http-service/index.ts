@@ -42,8 +42,13 @@ function createApiServices(options): Rule[] {
 function addApiUrlService(options: any) {
   return (tree: Tree) => {
     const parsedPath = parseName(options.path + '/api/service', 'api-url.service.ts');
-    const functions: string[] = [];
-    const apiUrl = buildUrl(options.api.schemes[0], options.api.host, options.api.basePath ? options.api.basePath : '');
+
+    let scheme = 'http';
+    if (options.api.hasOwnProperty('schemes')) {
+      scheme = options.api.schemes[0];
+    }
+
+    const apiUrl = buildUrl(scheme, options.api.host, options.api.basePath ? options.api.basePath : '');
 
     // Create service file
     const templateSource = apply(url('./files/api-url-service'), [
@@ -88,7 +93,7 @@ function addService(options: any, name: string): Rule {
     const importsDtosArray = arrayUniq(importsDto);
     let importDtoString = '';
     importsDtosArray.forEach(importString => {
-      let importDtoSource = strings.decamelize(importString.replace('Dto', '-dto') + '.model');
+      let importDtoSource = strings.dasherize(importString) + '.model';
       importDtoString += 'import { ' + importsDtosArray.join(', ') + "} from '../model/" + importDtoSource + "';\n";
     });
 
@@ -111,6 +116,8 @@ function addService(options: any, name: string): Rule {
 
 function generateFunction(endpoint: string, definition: any, verb: string) {
   const name = definition.operationId;
+
+  // TODO: ajouter les paramètres de fonction dans les commentaires
   const summary = definition.summary;
 
   // Request options

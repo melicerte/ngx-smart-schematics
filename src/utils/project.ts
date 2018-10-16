@@ -1,5 +1,6 @@
 import { WorkspaceProject } from "@angular-devkit/core/src/workspace";
 import { strings } from "@angular-devkit/core";
+import { SchematicsException } from "@angular-devkit/schematics";
 
 export enum ProjectType {
     Application = 'application',
@@ -26,12 +27,14 @@ export function getObjectsFromParameters(parameters: any): string[] {
     if (parameters.some(p => p.in === 'body')) {
         const obj = parameters.find(p => p.in === 'body');
 
+        console.log('SCHEMA', obj.schema);
+
         switch (obj.schema.type) {
             case 'object':
-                types.push(strings.classify(obj.schema.xml.name + 'Dto'));
+                types.push(strings.classify(getPropertyName(obj.schema) + 'Dto'));
                 break;
             case 'array':
-                types.push(strings.classify(obj.schema.items.xml.name + 'Dto'));
+                types.push(strings.classify(getPropertyName(obj.schema.items) + 'Dto'));
                 break;
         }
     }
@@ -44,6 +47,7 @@ export function getFunctionParameters(parameters: any): string {
 
     parameters.forEach(parameter => {
         if (['path', 'query'].some(parameterIn => parameter.in === parameterIn)) {
+            console.log('PARAMETER', parameter);
             let functionParameter = parameter.name;
 
             if (!parameter.required) {
@@ -91,12 +95,14 @@ export function getBodyType(definition: any): string {
     if (definition.parameters.some(p => p.in === 'body')) {
         const obj = definition.parameters.find(p => p.in === 'body');
 
+        console.log('PARAMETER 2', obj.schema);
+
         switch (obj.schema.type) {
             case 'object':
-                bodyType = strings.classify(obj.schema.xml.name + 'Dto');
+                bodyType = strings.classify(getPropertyName(obj.schema) + 'Dto');
                 break;
             case 'array':
-                bodyType = strings.classify(obj.schema.items.xml.name + 'Dto[]');
+                bodyType = strings.classify(getPropertyName(obj.schema.items) + 'Dto[]');
                 break;
             default:
                 bodyType = translateParameterType(obj.schema.type);
@@ -112,17 +118,18 @@ export function getReturnType(definition: any): string {
     for (let response in definition.responses) {
         if (response === '200') {
             const schema = definition.responses[response].schema;
+            console.log('SCHEMA 2', schema);
             switch (schema.type) {
                 case 'object':
                     if (schema.hasOwnProperty('xml') && schema.xml.hasOwnProperty('name')) {
-                        returnType = strings.classify(schema.xml.name + 'Dto');
+                        returnType = strings.classify(getPropertyName(schema) + 'Dto');
                     }
                     break;
                 case 'array':
                     switch (schema.items.type) {
                         case 'object':
                             if (schema.items.hasOwnProperty('xml') && schema.items.xml.hasOwnProperty('name')) {
-                                returnType = schema.items.xml.name + 'Dto[]';
+                                returnType = getPropertyName(schema.items) + 'Dto[]';
                             }
                             break;
                         default:
@@ -136,6 +143,18 @@ export function getReturnType(definition: any): string {
     }
 
     return returnType;
+}
+
+export function getPropertyName(property: any) {
+    if (property.hasOwnProperty('title')) {
+        return property.title;
+    }
+
+    if (property.hasOwnProperty('xml') && property.xml.hasOwnProperty('name')) {
+        return property.xml.name;
+    }
+
+    throw new SchematicsException('Impossible de récupérer le nom de la propriété : ' + JSON.stringify(property));
 }
 
 function isScalar(eltType: string): boolean {
