@@ -85,15 +85,14 @@ function addService(options: any, name: string): Rule {
     // Add functions to service
     for (let path in options.api.paths) {
       for (let verb in options.api.paths[path]) {
-        if (!['get', 'post', 'put', 'delete'].some(authorizedVerb => authorizedVerb === verb)) {
+        if (!['get', 'post', 'put', 'delete', 'patch'].some(authorizedVerb => authorizedVerb === verb)) {
           continue;
         }
         
-        // TODO import Dtos used as ReturnType : example StatResponseDto of stat function
-
         if (options.api.paths[path][verb].tags === undefined) {
           functions.push(generateFunction(path, options.api.paths[path][verb], verb));
           importsDto = importsDto.concat(getObjectsFromParameters(options.api.paths[path][verb].parameters));
+          importsDto = importsDto.concat(getReturnType(options.api.paths[path][verb]));
           continue;
         }
 
@@ -101,17 +100,18 @@ function addService(options: any, name: string): Rule {
           if (tag === name) {
             functions.push(generateFunction(path, options.api.paths[path][verb], verb));
             importsDto = importsDto.concat(getObjectsFromParameters(options.api.paths[path][verb].parameters));
+            importsDto = importsDto.concat(getReturnType(options.api.paths[path][verb]));
           }
         });
       }
     }
 
     // Imports DTOs
-    const importsDtosArray = arrayUniq(importsDto);
+    const importsDtosArray = arrayUniq(importsDto).filter(importTest => importTest !== 'any');
     let importDtoString = '';
     importsDtosArray.forEach(importString => {
       let importDtoSource = strings.dasherize(importString) + '.model';
-      importDtoString += 'import { ' + importsDtosArray.join(', ') + "} from '../model/" + importDtoSource + "';\n";
+      importDtoString += 'import { ' + importString + "} from '../model/" + importDtoSource + "';\n";
     });
 
     // Create service file
@@ -135,7 +135,7 @@ function generateFunction(endpoint: string, definition: any, verb: string) {
   const name = definition.operationId;
 
   // TODO: ajouter les paramètres de fonction dans les commentaires
-  const summary = definition.summary;
+  const summary = definition.summary || definition.description || verb + ' ' + name;
 
   // Request options
   let requestOptions = 'const options: any = {};';
@@ -157,7 +157,7 @@ function generateFunction(endpoint: string, definition: any, verb: string) {
   // const statusString = status.join('&status=');
   const finalEndpoint = fillEndpointParameters(endpoint, definition.parameters);
   let functionParameters = getFunctionParameters(definition.parameters);
-  if (['post', 'put'].some(curVerb => verb === curVerb) && functionParameters !== '') {
+  if (['post', 'put', 'patch'].some(curVerb => verb === curVerb) && functionParameters !== '') {
     functionParameters += ', ';
   }
 
