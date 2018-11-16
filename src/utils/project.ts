@@ -122,15 +122,10 @@ export function getBodyType(definition: any): string {
 
 export function getReturnType(definition: any): string {
     let returnType = 'any';
-    
-    if (definition.operationId === 'stat') {
-        console.log('DEFINITION', definition.responses['200']);
-    }
 
     for (let response in definition.responses) {
         if (response === '200') {
             const schema = definition.responses[response].schema;
-            console.log('SCHEMA', schema);
             switch (schema.type) {
                 case 'object':
                     try {

@@ -115,7 +115,6 @@ function addService(options: any, name: string): Rule {
     });
 
     // Create service file
-    // TODO: if no imports in service, delete the 2 first lines
     const templateSource = apply(url('./files/api-service'), [
       options.spec ? noop() : filter(path => !path.endsWith('.spec.ts')),
       template({
@@ -134,7 +133,6 @@ function addService(options: any, name: string): Rule {
 function generateFunction(endpoint: string, definition: any, verb: string) {
   const name = definition.operationId;
 
-  // TODO: ajouter les paramètres de fonction dans les commentaires
   const summary = definition.summary || definition.description || verb + ' ' + name;
 
   // Request options
@@ -153,8 +151,6 @@ function generateFunction(endpoint: string, definition: any, verb: string) {
   // Generate datas
   const returnType = getReturnType(definition);
   const bodyType = getBodyType(definition);
-  // TODO: si paramètre de type array, construire la string à passer dans l'URL
-  // const statusString = status.join('&status=');
   const finalEndpoint = fillEndpointParameters(endpoint, definition.parameters);
   let functionParameters = getFunctionParameters(definition.parameters);
   if (['post', 'put', 'patch'].some(curVerb => verb === curVerb) && functionParameters !== '') {
@@ -178,12 +174,12 @@ function generateFunction(endpoint: string, definition: any, verb: string) {
   });
 }
 
-// TODO: prendre en compte le fait que les paramètres sont optionnels dans le json : https://swagger.io/specification/v2/#dataTypeType
 export default function (options: any): Rule {
   return (host: Tree) => {
     return chain([
       // Merges the project tree with the virtual tree
       mergeWith(apply(source(host), createApiServices(options))),
+      // TODO apply pretty code library
       options.lintFix ? applyLintFix(options.path + 'api/service') : noop(),
     ]);
   };

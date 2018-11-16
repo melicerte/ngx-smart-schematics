@@ -4,8 +4,8 @@
     "title": "Angular Api structure Options Schema",
     "type": "object",
     "properties": {
-        "jsonApi": {
-            "description": "The OpenAPI Specifications json describing the API.",
+        "api": {
+            "description": "The OpenAPI Specifications json or yaml describing the API.",
             "type": "string",
             "$default": {
                 "$source": "argv",
@@ -20,6 +20,6 @@
         }
     },
     "required": [
-        "jsonApi"
+        "api"
     ]
 }

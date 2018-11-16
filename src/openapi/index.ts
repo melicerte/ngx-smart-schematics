@@ -19,12 +19,12 @@ function loadOptions(tree: Tree, options: any) {
     }
 }
 
-function loadApi(apiJson, options): Rule {
+function loadApi(api, options): Rule {
     return (host: Tree) => {
         return new Observable<Tree>((observer) => {
-            SwaggerParser.validate(apiJson)
-                .then(api => {
-                    options.api = api;
+            SwaggerParser.validate(api)
+                .then(apiObject => {
+                    options.api = apiObject;
                     observer.next(host);
                     observer.complete();
                 })
@@ -38,11 +38,13 @@ function loadApi(apiJson, options): Rule {
 
 
 export default function serviceApi(options: any): Rule {
-
-    // TODO: required, throw error if jsonApi not given
-    const apiJson = require(options.jsonApi);
-
     return (tree: Tree, _context: SchematicContext) => {
+        if (!options.api) {
+            throw new SchematicsException('Option (api) is required.');
+        }
+
+        const api = require(options.api);
+
         let rules: Rule[] = [];
 
         // Load options
@@ -50,10 +52,10 @@ export default function serviceApi(options: any): Rule {
 
 
         // Load API
-        rules.push(loadApi(apiJson, options));
+        rules.push(loadApi(api, options));
 
         return chain([
-            loadApi(apiJson, options),
+            loadApi(api, options),
             schematic('http-service', options),
             schematic('models', options),
         ]);
