@@ -89,6 +89,8 @@ function addService(options: any, name: string): Rule {
           continue;
         }
         
+        // TODO import Dtos used as ReturnType : example StatResponseDto of stat function
+
         if (options.api.paths[path][verb].tags === undefined) {
           functions.push(generateFunction(path, options.api.paths[path][verb], verb));
           importsDto = importsDto.concat(getObjectsFromParameters(options.api.paths[path][verb].parameters));

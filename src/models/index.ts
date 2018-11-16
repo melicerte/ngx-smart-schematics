@@ -24,7 +24,7 @@ import { parseName } from '../utils/parse-name';
 import { applyLintFix } from '../utils/lint-fix';
 import { buildUrl, fillEndpointParameters, buildQueryParameters } from '../utils/url';
 import { templateFile } from '../utils/template';
-import { getFunctionParameters, translateParameterType, getPropertyName } from '../utils/project';
+import { getFunctionParameters, translateParameterType, getPropertyName, arrayUniq } from '../utils/project';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
 function createDTOs(options): Rule[] {
@@ -56,73 +56,26 @@ function addDto(options: any, name: string, schema: any): Rule {
       return tree;
     }
 
-    //Imports
-    const imports: string[] = [];
-
-    // Add members
-    const members: any[] = [];
     let requiredFields = [];
     if (schema.hasOwnProperty('required')) {
       requiredFields = schema.required;
     }
 
-    let member = '';
     for (let propertyName in schema.properties) {
-      member = '';
       if (schema.properties.hasOwnProperty(propertyName)) {
         let required = requiredFields.some(field => field === propertyName);
         switch (schema.properties[propertyName].type) {
-          case 'object':
-            imports.push('import { ' + getPropertyName(schema.properties[propertyName]) + "Dto } from './" + strings.dasherize(getPropertyName(schema.properties[propertyName])) + "-dto.model';");
-            member = propertyName;
-            if (!required) {
-              member += '?';
-            }
-            members.push(member + ': ' + getPropertyName(schema.properties[propertyName]) + 'Dto;');
-            break;
-          case 'array':
-            let memberName = '';
-            switch (schema.properties[propertyName].items.type) {
-              case 'object':
-                imports.push('import { ' + getPropertyName(schema.properties[propertyName].items) + "Dto } from './" + strings.dasherize(getPropertyName(schema.properties[propertyName].items)) + "-dto.model';");
-                memberName = getPropertyName(schema.properties[propertyName].items) + 'Dto';
-              break;
-              default:
-                memberName = translateParameterType(schema.properties[propertyName].items.type);
-            }
-            
-            member = propertyName;
-            if (!required) {
-              member += '?';
-            }
-            members.push(member + ': ' + memberName + '[];');
-            break;
           case 'string':
-            let type = translateParameterType(schema.properties[propertyName].type);
             if (schema.properties[propertyName].hasOwnProperty('enum')) {
               rules.push(addEnum(options, schema.properties[propertyName], propertyName));
-              type = strings.classify(propertyName);
-              imports.push('import { ' + type + " } from '../enum/" + strings.dasherize(propertyName) + ".enum';");
             }
-
-            member = propertyName;
-            if (!required) {
-              member += '?';
-            }
-            members.push(`${member}: ${type};`);
             break;
-          default:
-            member = propertyName;
-            if (!required) {
-              member += '?';
-            }
-            members.push(member + ': ' + translateParameterType(schema.properties[propertyName].type) + ';');
         }
       }
     }
 
-    const membersString = members.join("\n  ");
-    const importsString = imports.join("\n");
+    const membersString = getMembers(schema).join("\n");
+    const importsString = getImports(schema).join("\n");
 
     // Create DTO file
     const templateSource = apply(url('./files/model'), [
@@ -140,6 +93,129 @@ function addDto(options: any, name: string, schema: any): Rule {
       chain(rules)
     ]);
   };
+}
+
+function getMembers(schema: any): string[] {
+  // Add members
+  const members: any[] = [];
+  let requiredFields = [];
+  if (schema.hasOwnProperty('required')) {
+    requiredFields = schema.required;
+  }
+
+  let member = '';
+  for (let propertyName in schema.properties) {
+    member = '';
+    if (schema.properties.hasOwnProperty(propertyName)) {
+      let required = requiredFields.some(field => field === propertyName);
+      switch (schema.properties[propertyName].type) {
+        case 'object':
+          member = propertyName;
+          if (!required) {
+            member += '?';
+          }
+
+          try {
+            const extractedName = getPropertyName(schema.properties[propertyName]);
+            members.push(member + ': ' + extractedName + 'Dto;');
+          } catch(se) {
+            members.push(member + ': { ' + getMembers(schema.properties[propertyName]).join("\n") + ' };');
+          }
+          break;
+        case 'array':
+          member = propertyName;
+          if (!required) {
+            member += '?';
+          }
+
+          switch (schema.properties[propertyName].items.type) {
+            case 'object':
+              try {
+                const extractedName = getPropertyName(schema.properties[propertyName].items);
+                members.push(member + ': ' + getMembers(schema.properties[propertyName].items).join("\n") + '[];');
+              } catch(se) {
+                members.push(member + ": {\n" + getMembers(schema.properties[propertyName].items).join("\n") + "\n}[];");
+              }
+              break;
+            case 'string':
+              let type = translateParameterType(schema.properties[propertyName].items.type);
+              if (schema.properties[propertyName].hasOwnProperty('enum')) {
+                type = strings.classify(propertyName);
+              }
+              members.push(member + ': ' + type + '[];');
+            break;
+            default: 
+              members.push(member + ': ' + translateParameterType(schema.properties[propertyName].items.type) + '[];');
+          }
+          break;
+        case 'string':
+          let type = translateParameterType(schema.properties[propertyName].type);
+          if (schema.properties[propertyName].hasOwnProperty('enum')) {
+            type = strings.classify(propertyName);
+          }
+
+          member = propertyName;
+          if (!required) {
+            member += '?';
+          }
+          members.push(`${member}: ${type};`);
+          break;
+        default:
+          member = propertyName;
+          if (!required) {
+            member += '?';
+          }
+          members.push(member + ': ' + translateParameterType(schema.properties[propertyName].type) + ';');
+      }
+    }
+  }
+
+  return members;
+}
+
+function getImports(schema: any): string[] {
+  //Imports
+  const imports: string[] = [];
+
+  for (let propertyName in schema.properties) {
+    if (schema.properties.hasOwnProperty(propertyName)) {
+      switch (schema.properties[propertyName].type) {
+        case 'object':
+          try {
+            const extractedName = getPropertyName(schema.properties[propertyName]);
+            imports.push('import { ' + extractedName + "Dto } from './" + strings.dasherize(extractedName) + "-dto.model';");
+          } catch (se) {
+            // Nothing to import if no model
+          }
+          break;
+        case 'array':
+          // TODO recursive call
+          switch (schema.properties[propertyName].items.type) {
+            case 'object':
+              try {
+                const extractedName = getPropertyName(schema.properties[propertyName].items);
+                imports.push('import { ' + extractedName + "Dto } from './" + strings.dasherize(extractedName) + "-dto.model';");
+              } catch(se) {
+                // No object = no import
+              }
+            break;
+            // TODO
+            case 'array':
+            break;
+          }
+          break;
+        case 'string':
+          let type = translateParameterType(schema.properties[propertyName].type);
+          if (schema.properties[propertyName].hasOwnProperty('enum')) {
+            type = strings.classify(propertyName);
+            imports.push('import { ' + type + " } from '../enum/" + strings.dasherize(propertyName) + ".enum';");
+          }
+          break;
+      }
+    }
+  }
+
+  return arrayUniq(imports);
 }
 
 function addEnum(options: any, schema: any, name: string) {

@@ -123,20 +123,31 @@ export function getBodyType(definition: any): string {
 export function getReturnType(definition: any): string {
     let returnType = 'any';
     
+    if (definition.operationId === 'stat') {
+        console.log('DEFINITION', definition.responses['200']);
+    }
+
     for (let response in definition.responses) {
         if (response === '200') {
             const schema = definition.responses[response].schema;
+            console.log('SCHEMA', schema);
             switch (schema.type) {
                 case 'object':
-                    if (schema.hasOwnProperty('xml') && schema.xml.hasOwnProperty('name')) {
-                        returnType = strings.classify(getPropertyName(schema) + 'Dto');
+                    try {
+                        const propertyName = getPropertyName(schema)
+                        returnType = strings.classify(propertyName + 'Dto');
+                    } catch(se) {
+                        // Do nothing if not model
                     }
                     break;
                 case 'array':
                     switch (schema.items.type) {
                         case 'object':
-                            if (schema.items.hasOwnProperty('xml') && schema.items.xml.hasOwnProperty('name')) {
-                                returnType = getPropertyName(schema.items) + 'Dto[]';
+                            try {
+                                const propertyName = getPropertyName(schema.items)
+                                returnType = strings.classify(propertyName + 'Dto') + '[]';
+                            } catch (se) {
+                                // Do nothing if not model
                             }
                             break;
                         default:
