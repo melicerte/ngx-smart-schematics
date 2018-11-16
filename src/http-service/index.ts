@@ -31,10 +31,15 @@ function createApiServices(options): Rule[] {
 
   rules.push(addApiUrlService(options));
 
-  // Add API Services
-  options.api.tags.forEach(tag => {
-    rules.push(addService(options, tag.name));
-  });
+  // Only one API service
+  if (options.api.tags === undefined) {
+    rules.push(addService(options, 'api'));
+  } else {
+    // Add API Services
+    options.api.tags.forEach(tag => {
+      rules.push(addService(options, tag.name));
+    });
+  }
 
   return rules;
 }
@@ -80,6 +85,16 @@ function addService(options: any, name: string): Rule {
     // Add functions to service
     for (let path in options.api.paths) {
       for (let verb in options.api.paths[path]) {
+        if (!['get', 'post', 'put', 'delete'].some(authorizedVerb => authorizedVerb === verb)) {
+          continue;
+        }
+        
+        if (options.api.paths[path][verb].tags === undefined) {
+          functions.push(generateFunction(path, options.api.paths[path][verb], verb));
+          importsDto = importsDto.concat(getObjectsFromParameters(options.api.paths[path][verb].parameters));
+          continue;
+        }
+
         options.api.paths[path][verb].tags.forEach(tag => {
           if (tag === name) {
             functions.push(generateFunction(path, options.api.paths[path][verb], verb));
@@ -124,7 +139,8 @@ function generateFunction(endpoint: string, definition: any, verb: string) {
   let requestOptions = 'const options: any = {};';
 
   // Generate Content-Type header from definition if no json allowed
-  if (definition.produces.length > 0 &&
+  if (definition.produces !== undefined &&
+    definition.produces.length > 0 &&
     !definition.produces.some(contentType => contentType === 'application/json')) {
     const contentType = definition.produces[0];
     requestOptions = `const options: any = {

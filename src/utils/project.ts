@@ -22,12 +22,14 @@ export function buildDefaultPath(project: WorkspaceProject): string {
 }
 
 export function getObjectsFromParameters(parameters: any): string[] {
+    if (parameters === undefined) {
+        return [];
+    }
+
     const types: any = [];
 
     if (parameters.some(p => p.in === 'body')) {
         const obj = parameters.find(p => p.in === 'body');
-
-        console.log('SCHEMA', obj.schema);
 
         switch (obj.schema.type) {
             case 'object':
@@ -43,11 +45,14 @@ export function getObjectsFromParameters(parameters: any): string[] {
 }
 
 export function getFunctionParameters(parameters: any): string {
+    if (parameters === undefined) {
+        return '';
+    }
+
     const functionParameters: any = [];
 
     parameters.forEach(parameter => {
         if (['path', 'query'].some(parameterIn => parameter.in === parameterIn)) {
-            console.log('PARAMETER', parameter);
             let functionParameter = parameter.name;
 
             if (!parameter.required) {
@@ -92,10 +97,13 @@ export function arrayUniq(newarray: string[]) {
 
 export function getBodyType(definition: any): string {
     let bodyType = 'any';
+
+    if (definition.parameters === undefined) {
+        return 'any';
+    }
+    
     if (definition.parameters.some(p => p.in === 'body')) {
         const obj = definition.parameters.find(p => p.in === 'body');
-
-        console.log('PARAMETER 2', obj.schema);
 
         switch (obj.schema.type) {
             case 'object':
@@ -118,7 +126,6 @@ export function getReturnType(definition: any): string {
     for (let response in definition.responses) {
         if (response === '200') {
             const schema = definition.responses[response].schema;
-            console.log('SCHEMA 2', schema);
             switch (schema.type) {
                 case 'object':
                     if (schema.hasOwnProperty('xml') && schema.xml.hasOwnProperty('name')) {

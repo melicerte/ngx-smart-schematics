@@ -3,6 +3,10 @@ export function buildUrl(scheme: string, host: string, basePath: string) {
 }
 
 export function fillEndpointParameters(endpoint: string, parameters: any): string {
+    if (parameters === undefined) {
+        return endpoint;
+    }
+
     parameters.forEach(parameter => {
         if (['path', 'query'].some(parameterIn => parameter.in === parameterIn)) {
             if (parameter.type === 'array') {
@@ -17,7 +21,11 @@ export function fillEndpointParameters(endpoint: string, parameters: any): strin
 }
 
 // TODO prendre en compte les paramètres optionnels (!required)
-export function buildQueryParameters(parameters: any): { parametersString: string, parametersDefinition: string} {
+export function buildQueryParameters(parameters: any): { parametersString: string, parametersDefinition: string } {
+    if (parameters === undefined) {
+        return { parametersString: '', parametersDefinition: '' };
+    }
+
     let parametersArray: string[] = [];
     let parametersString = '';
     let parametersDefinition = '';
