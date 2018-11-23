@@ -31,17 +31,37 @@ function createApiServices(options): Rule[] {
 
   rules.push(addApiUrlService(options));
 
+  const tags = extractTagsFromApi(options.api);
+
   // Only one API service
-  if (options.api.tags === undefined) {
+  if (tags.length === 0) {
     rules.push(addService(options, 'api'));
   } else {
     // Add API Services
-    options.api.tags.forEach(tag => {
-      rules.push(addService(options, tag.name));
+    tags.forEach(tag => {
+      rules.push(addService(options, tag));
     });
   }
 
   return rules;
+}
+
+function extractTagsFromApi(api: any): string[] {
+  const tags:string[] = [];
+
+  for (let path in api.paths) {
+    for (let verb in api.paths[path]) {
+      if (!['get', 'post', 'put', 'delete', 'patch'].some(authorizedVerb => authorizedVerb === verb)) {
+        continue;
+      }
+
+      if (api.paths[path][verb].hasOwnProperty('tags') && api.paths[path][verb].tags.length > 0) {
+        tags.push(api.paths[path][verb].tags[0]);
+      }
+    }
+  }
+
+  return arrayUniq(tags);
 }
 
 function addApiUrlService(options: any) {
@@ -92,7 +112,7 @@ function addService(options: any, name: string): Rule {
         if (options.api.paths[path][verb].tags === undefined) {
           functions.push(generateFunction(path, options.api.paths[path][verb], verb));
           importsDto = importsDto.concat(getObjectsFromParameters(options.api.paths[path][verb].parameters));
-          importsDto = importsDto.concat(getReturnType(options.api.paths[path][verb]));
+          importsDto = importsDto.concat(getReturnType(options.api.paths[path][verb]).replace('[]', ''));
           continue;
         }
 
@@ -100,7 +120,7 @@ function addService(options: any, name: string): Rule {
           if (tag === name) {
             functions.push(generateFunction(path, options.api.paths[path][verb], verb));
             importsDto = importsDto.concat(getObjectsFromParameters(options.api.paths[path][verb].parameters));
-            importsDto = importsDto.concat(getReturnType(options.api.paths[path][verb]));
+            importsDto = importsDto.concat(getReturnType(options.api.paths[path][verb]).replace('[]', ''));
           }
         });
       }
