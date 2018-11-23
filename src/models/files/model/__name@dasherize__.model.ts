@@ -1,5 +1,3 @@
-<%=imports%>
-
-export class <%= classify(name) %> {
-  <%=members%>
+<%=imports%>export class <%= classify(name) %> {
+<%=members%>
 }

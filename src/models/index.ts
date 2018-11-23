@@ -22,10 +22,10 @@ import { strings } from '@angular-devkit/core';
 
 import { parseName } from '../utils/parse-name';
 import { applyLintFix } from '../utils/lint-fix';
-import { buildUrl, fillEndpointParameters, buildQueryParameters } from '../utils/url';
-import { templateFile } from '../utils/template';
-import { getFunctionParameters, translateParameterType, getPropertyName, arrayUniq } from '../utils/project';
+import { translateParameterType, getPropertyName, arrayUniq } from '../utils/project';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
+
+const TABSPACE = '  ';
 
 function createDTOs(options): Rule[] {
   const rules: Rule[] = [];
@@ -75,7 +75,11 @@ function addDto(options: any, name: string, schema: any): Rule {
     }
 
     const membersString = getMembers(schema).join("\n");
-    const importsString = getImports(schema).join("\n");
+    let importsString = getImports(schema).join("\n");
+
+    if (importsString !== '') {
+      importsString += "\n\n";
+    }
 
     // Create DTO file
     const templateSource = apply(url('./files/model'), [
@@ -95,9 +99,9 @@ function addDto(options: any, name: string, schema: any): Rule {
   };
 }
 
-function getMembers(schema: any): string[] {
+function getMembers(schema: any, level=1): string[] {
   // Add members
-  const members: any[] = [];
+  let members: any[] = [];
   let requiredFields = [];
   if (schema.hasOwnProperty('required')) {
     requiredFields = schema.required;
@@ -119,7 +123,7 @@ function getMembers(schema: any): string[] {
             const extractedName = getPropertyName(schema.properties[propertyName]);
             members.push(member + ': ' + extractedName + 'Dto;');
           } catch(se) {
-            members.push(member + ': { ' + getMembers(schema.properties[propertyName]).join("\n") + ' };');
+            members.push(member + ": {\n" + getMembers(schema.properties[propertyName], level + 1).join("\n") + "\n" + getSpaces(level) + '};');
           }
           break;
         case 'array':
@@ -132,9 +136,9 @@ function getMembers(schema: any): string[] {
             case 'object':
               try {
                 const extractedName = getPropertyName(schema.properties[propertyName].items);
-                members.push(member + ': ' + getMembers(schema.properties[propertyName].items).join("\n") + '[];');
+                members.push(member + ': ' + getMembers(schema.properties[propertyName].items, level+1).join("\n") + '[];');
               } catch(se) {
-                members.push(member + ": {\n" + getMembers(schema.properties[propertyName].items).join("\n") + "\n}[];");
+                members.push(member + ": {\n" + getMembers(schema.properties[propertyName].items, level + 1).join("\n") + "\n" + getSpaces(level) + "}[];");
               }
               break;
             case 'string':
@@ -170,7 +174,17 @@ function getMembers(schema: any): string[] {
     }
   }
 
+  members = members.map(member => getSpaces(level) + member);
+
   return members;
+}
+
+function getSpaces(level: number) {
+  let spaces = '';
+  for (let i=level;i > 0;i--) {
+    spaces += TABSPACE;
+  }
+  return spaces;
 }
 
 function getImports(schema: any): string[] {

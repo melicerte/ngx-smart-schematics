@@ -156,16 +156,18 @@ function generateFunction(endpoint: string, definition: any, verb: string) {
   const summary = definition.summary || definition.description || verb + ' ' + name;
 
   // Request options
-  let requestOptions = 'const options: any = {};';
+  let requestOptions = '';
+  let optionsParameter = '';
 
   // Generate Content-Type header from definition if no json allowed
   if (definition.produces !== undefined &&
     definition.produces.length > 0 &&
     !definition.produces.some(contentType => contentType === 'application/json')) {
     const contentType = definition.produces[0];
-    requestOptions = `const options: any = {
+    requestOptions = `const options = {
       headers: new HttpHeaders({ 'Content-Type': '${contentType}' })
     };`;
+    optionsParameter = ', options';
   }
 
   // Generate datas
@@ -183,12 +185,13 @@ function generateFunction(endpoint: string, definition: any, verb: string) {
   return templateFile(__dirname + `/files/functions/${verb}.ts`, {
     summary: summary,
     name: name,
-    requestOptions: requestOptions,
+    requestOptions: requestOptions !== '' ? requestOptions + "\n    " : '',
     verb: verb,
     finalEndpoint: finalEndpoint,
     functionParameters: functionParameters,
     queryParameters: queryParameters.parametersString,
-    queryParametersDefinition: queryParameters.parametersDefinition,
+    queryParametersDefinition: queryParameters.parametersDefinition !== '' ? queryParameters.parametersDefinition + "\n    " : '',
+    optionsParameter: optionsParameter,
     bodyType: bodyType,
     returnType: returnType,
   });
