@@ -1,4 +1,4 @@
-# openapi schematic
+# Openapi Schematic
 
 This schematic generates Angular services and Data Transfer Object to communicate with an API.
 
@@ -12,8 +12,14 @@ It creates `api` directory in app source code and generates code into it.
 `ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/api.json`
 
 ### Options
-**path** Want to generate code in another location than `api` ? Just do it :
-`ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/api.json **--path=/path/to/generate/code**`
+**path** 
 
-**lintFix** Need to lintFix generated files to fit your lint rules ? Just do it :
-`ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/api.json **--lintFix**`
+Want to generate code in another location than `api` ? Just do it :
+
+`ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/api.json --path=/path/to/generate/code`
+
+**lintFix** 
+
+Need to lintFix generated files to fit your lint rules ? Just do it :
+
+`ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/api.json --lintFix`
