@@ -1,6 +1,6 @@
 {
-  "name": "openapi-schematic",
-  "version": "0.1.0",
+  "name": "ngx-smart-schematics",
+  "version": "1.0.0-beta1",
   "description": "Schematics to generate services and Data Transfer Objects to communicate with an API",
   "scripts": {
     "build": "tsc -p tsconfig.json",
