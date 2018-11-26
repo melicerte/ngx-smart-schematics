@@ -1,17 +1,13 @@
-# Generate Services and Models to communicate with an API
+# NGX SMART SCHEMATICS
 
-This schematic generates Angular services and Data Transfer Object to communicate with an API.
+A very useful schematics collection to save you time and focus on what matters !
 
-All you need is a valid OpenAPI json
-See https://swagger.io/resources/open-api/ for specifications
+| Schematic | What it does | Readme |
+| ------ | ------ |
+| openapi | Generates services and model Data Transfer Objects to communicate with an API | [README](./open-api/README.md) |
 
-## Installation
-`yarn add ngx-smart-schematic`
+## How to install
+`yarn add ngx-smart-schematics`
 
-## Usage
-`ng g --collection ngx-smart-schematic ngx-smart-schematic:generate --api=/path/to/api.json`
-
-### Options
-TODO
-lintFix 
-path
+## How to use
+Each schematic has its own README. Please refer to the table above.

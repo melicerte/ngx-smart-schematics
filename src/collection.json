@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
-    "generate": {
+    "openapi": {
       "description": "Generates Angular Services and Data Transfer Objects to user an API",
       "factory": "./openapi",
       "schema": "./openapi/schema.json"
