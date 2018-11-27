@@ -7,13 +7,14 @@ A very useful schematics collection to save you time and focus on what matters !
 | openapi | Generates services and model Data Transfer Objects to communicate with an API | [README](./src/openapi/README.md) |
 
 ## How to install
-`yarn add ngx-smart-schematics`
+`yarn add ngx-smart-schematics --dev`
 
 ## How to use
 
 Each schematic has its own README. Please refer to the table above.
 
-### Quick and dirty
-1. Want to generate code to communicate with an API ?
+### Quick Start
+
+#### Want to generate code to communicate with an API ?
 
 `ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/api.json`
