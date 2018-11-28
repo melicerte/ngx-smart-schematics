@@ -1,0 +1,25 @@
+{
+  "name": "ngx-smart-schematics",
+  "version": "1.0.0-rc.1",
+  "description": "Schematics to generate services and Data Transfer Objects to communicate with an API",
+  "scripts": {
+    "build": "bin/build.sh",
+    "test": "npm run build && jasmine src/**/*_spec.js"
+  },
+  "keywords": [
+    "schematics"
+  ],
+  "author": "Etienne Châtaignier @melicerte",
+  "license": "MIT",
+  "schematics": "./collection.json",
+  "peerDependencies": {
+    "@angular-devkit/core": "^0.8.4",
+    "@angular-devkit/schematics": "^0.8.4",
+    "@schematics/angular": "^0.8.4",
+    "@types/jasmine": "^2.6.0",
+    "@types/node": "^8.0.31",
+    "jasmine": "^2.8.0",
+    "swagger-parser": "^6.0.0",
+    "typescript": "^2.5.2"
+  }
+}
