@@ -1,6 +1,6 @@
 {
   "name": "ngx-smart-schematics",
-  "version": "1.0.0-beta1",
+  "version": "1.0.0-rc.1",
   "description": "Schematics to generate services and Data Transfer Objects to communicate with an API",
   "scripts": {
     "build": "bin/build.sh",
