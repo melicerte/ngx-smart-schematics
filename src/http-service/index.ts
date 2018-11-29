@@ -127,7 +127,9 @@ function addService(options: any, name: string): Rule {
     }
 
     // Imports DTOs
-    const importsDtosArray = arrayUniq(importsDto).filter(importTest => importTest !== 'any');
+    const importsDtosArray = arrayUniq(importsDto).filter(importTest => {
+      return !['any', 'string', 'number', 'boolean', 'void'].some(importTest2 => importTest2 === importTest);
+    });
     let importDtoString = '';
     importsDtosArray.forEach(importString => {
       let importDtoSource = strings.dasherize(importString) + '.model';
