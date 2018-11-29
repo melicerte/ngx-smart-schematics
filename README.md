@@ -1,5 +1,3 @@
-# WIP : DO NOT USE
-
 # NGX SMART SCHEMATICS
 
 A very useful schematics collection to save you time and focus on what matters !
