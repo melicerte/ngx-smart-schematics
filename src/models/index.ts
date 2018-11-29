@@ -136,7 +136,7 @@ function getMembers(schema: any, level=1): string[] {
             case 'object':
               try {
                 const extractedName = getPropertyName(schema.properties[propertyName].items);
-                members.push(member + ': ' + getMembers(schema.properties[propertyName].items, level+1).join("\n") + '[];');
+                members.push(member + ': ' + extractedName + 'Dto[];');
               } catch(se) {
                 members.push(member + ": {\n" + getMembers(schema.properties[propertyName].items, level + 1).join("\n") + "\n" + getSpaces(level) + "}[];");
               }
