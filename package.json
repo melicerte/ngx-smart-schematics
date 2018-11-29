@@ -1,13 +1,15 @@
 {
   "name": "ngx-smart-schematics",
-  "version": "1.0.0-beta4",
+  "version": "1.0.0-beta5",
   "description": "Schematics to generate services and Data Transfer Objects to communicate with an API",
   "scripts": {
     "build": "bin/build.sh",
     "test": "npm run build && jasmine src/**/*_spec.js"
   },
   "keywords": [
-    "schematics"
+    "schematics",
+    "angular",
+    "API"
   ],
   "author": "Etienne Châtaignier @melicerte",
   "license": "MIT",

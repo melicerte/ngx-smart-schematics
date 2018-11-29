@@ -1,0 +1,14 @@
+# NGX SMART SCHEMATICS
+
+A very useful schematics collection to save you time and focus on what matters !
+
+| Schematic | What it does |
+| ------ | ------ |
+| openapi | Generates services and model Data Transfer Objects to communicate with an API |
+
+## How to install
+`yarn add ngx-smart-schematics --dev`
+
+## How to use
+
+Each schematic has its own README. Please refer to the README on Github.
