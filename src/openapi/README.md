@@ -4,7 +4,7 @@ This schematic generates Angular services and Data Transfer Object to communicat
 
 All you need is a valid OpenAPI json.
 
-See https://swagger.io/resources/open-api/ for specifications.
+See [OpenAPI specification](https://swagger.io/resources/open-api/)
 
 ## Code generated
 It creates `api` directory in app source code and generates code into it
@@ -40,7 +40,8 @@ Need to lintFix generated files to fit your lint rules ? Just do it :
 
 ## Make a quick test
 
-Download json from (petstore.swagger.io)[https://petstore.swagger.io/]
+Download json from [petstore.swagger.io](https://petstore.swagger.io/)
 
 Generate API `ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/swagger.json`
 
+![ngx-smart-schematics-openapi](https://user-images.githubusercontent.com/4137883/49219278-13c31080-f3d3-11e8-91fb-d27bb1c36727.gif)
