@@ -15,7 +15,7 @@
   "license": "MIT",
   "homepage": "https://github.com/melicerte/ngx-smart-schematics#readme",
   "schematics": "./src/collection.json",
-  "peerDependencies": {
+  "dependencies": {
     "@angular-devkit/core": "^0.8.4",
     "@angular-devkit/schematics": "^0.8.4",
     "@schematics/angular": "^0.8.4",
