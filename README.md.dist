@@ -9,6 +9,12 @@ A very useful schematics collection to save you time and focus on what matters !
 ## How to install
 `yarn add ngx-smart-schematics --dev`
 
+### Install Peer Dependencies
+
+If you don't have all package dependencies, install them :
+
+`yarn add @schematics/angular @types/node typescript swagger-parser`
+
 ## How to use
 
 Each schematic has its own README. Please refer to the README on Github.
