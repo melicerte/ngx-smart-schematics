@@ -23,25 +23,25 @@ They are put in the `services/` directory
 Enum are generated from function schema definitions : they are put in the `enum/` directory
 
 ## How to use
-`ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/api.json`
+`ng g ngx-smart-schematics:openapi --api=/path/to/api.json`
 
 ### Options
 **path** 
 
 Want to generate code in another location than `api` ? Just do it :
 
-`ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/api.json --path=/path/to/generate/code`
+`ng g ngx-smart-schematics:openapi --api=/path/to/api.json --path=/path/to/generate/code`
 
 **lintFix** 
 
 Need to lintFix generated files to fit your lint rules ? Just do it :
 
-`ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/api.json --lintFix`
+`ng g ngx-smart-schematics:openapi --api=/path/to/api.json --lintFix`
 
 ## Make a quick test
 
 Download json from [petstore.swagger.io](https://petstore.swagger.io/)
 
-Generate API `ng g --collection ngx-smart-schematics ngx-smart-schematics:openapi --api=/path/to/swagger.json`
+Generate API `ng g ngx-smart-schematics:openapi --api=/path/to/swagger.json`
 
 ![ngx-smart-schematics-openapi](https://user-images.githubusercontent.com/4137883/49219278-13c31080-f3d3-11e8-91fb-d27bb1c36727.gif)
